@@ -15,6 +15,6 @@ The staging environment is ready for testing. Please verify that the following i
 - [ ] The staging environment is using the correct database schema
 
 Additional Information:
-- Image Tag: `{{ env.IMAGE_TAG }}`
-- Server URL: `{{ env.CONTAINER_APP_URL }}`
-- Terraform IaC files - Artifact URL: `{{ env.ARTIFACT_URL }}`
+- Image Tag: ${{ env.IMAGE_TAG }}
+- Server URL: ${{ env.CONTAINER_APP_URL }}
+- Terraform IaC files - Artifact URL: ${{ env.ARTIFACT_URL }}
