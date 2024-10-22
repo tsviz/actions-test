@@ -11,10 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Build
     permissions:
-      actions: write
+      actions: read
       contents: read
       packages: write
       id-token: write
+      issues: write
       security-events: write
 
     steps:
