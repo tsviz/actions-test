@@ -5,6 +5,10 @@ on:
   push:
     branches:
     - main
+env:
+  IMAGE_TAG: "123"
+  CONTAINER_APP_URL: "https://tsvi.io"
+  ARTIFACT_URL: "https://tsvi.io/artifact"
 
 jobs:
   build:
