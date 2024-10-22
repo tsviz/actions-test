@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/setup-dotnet@v4.0.1
+      uses: actions/checkout@v4.1.7
 
     - name: Create Issue
       uses: peter-evans/create-issue-from-file@v5.0.1
