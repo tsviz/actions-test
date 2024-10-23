@@ -1,0 +1,36 @@
+name: Build on Issue Closed
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  build:
+    if: contains(github.event.issue.labels.*.name, 'staging')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4.1.7
+
+    - name: Extract Artifact URL
+      id: extract-url
+      run: |
+        echo "Extracting Artifact URL from issue body..."
+        ARTIFACT_URL=$(echo "${{ github.event.issue.body }}" | grep -oP 'Artifact URL:\s*\K\S+')
+        echo "Artifact URL: $ARTIFACT_URL"
+        echo "::set-output name=artifact_url::$ARTIFACT_URL"
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run build
+      run: npm run build
+
+    - name: Use Artifact URL
+      run: "echo Using Artifact URL: ${{ steps.extract-url.outputs.artifact_url }}"
