@@ -8,7 +8,6 @@ on:
 env:
   IMAGE_TAG: "123"
   CONTAINER_APP_URL: "https://tsvi.io"
-  ARTIFACT_URL: "https://tsvi.io/artifact"
 
 jobs:
   build:
@@ -26,6 +25,22 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4.1.7
     
+    - name: Create an artifact
+      id: artifact
+      run: echo "Test" >> test.txt
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: artifact
+        path: test.txt
+
+    - name: Generate Artifact URL
+      id: generate_artifact_url
+      run: |
+        ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="artifact") | .id')
+        echo "ARTIFACT_URL=https://github.com/tsviz/actions-test/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID}" >> $GITHUB_ENV
+  
     - name: Create Issue
       uses: actions/github-script@v3
       with:
@@ -59,21 +74,3 @@ jobs:
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
         CONTAINER_APP_URL: ${{ env.CONTAINER_APP_URL }}
         ARTIFACT_URL: ${{ env.ARTIFACT_URL }}
-    # - name: Create Issue
-    #   uses: JasonEtco/create-an-issue@v2
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     IMAGE_TAG: ${{ env.IMAGE_TAG }}
-    #     CONTAINER_APP_URL: ${{ env.CONTAINER_APP_URL }}
-    #     ARTIFACT_URL: ${{ env.ARTIFACT_URL }}    
-    #   with:
-    #     filename: .github/ISSUE_TEMPLATE/staging-environment-ready.md
-    #     assignees: tsviz
-    
-    # - name: Create Issue
-    #   uses: peter-evans/create-issue-from-file@v5.0.1
-    #   with:
-    #     title: Staging Environment Ready for Testing
-    #     labels: staging,ready-for-testing,UAT
-    #     assignees: ${{ github.actor }}
-    #     content-filepath: .github/ISSUE_TEMPLATE/staging-environment-ready.md
