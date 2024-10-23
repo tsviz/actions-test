@@ -4,6 +4,12 @@ on:
   issues:
     types: [closed]
 
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
 jobs:
   build:
     if: contains(github.event.issue.labels.*.name, 'staging')
