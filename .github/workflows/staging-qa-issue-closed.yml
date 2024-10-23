@@ -31,7 +31,11 @@ jobs:
 
     - name: Download Artifact
       run: |
-        curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" ${{ env.artifact_url }} > artifact.zip
-        unzip artifact.zip -d artifact
+        echo "Downloading artifact from: ${{ env.artifact_url }}"
+        curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" ${{ env.artifact_url }} -o artifact.zip
+        echo "Downloaded artifact content:"
+        file artifact.zip
+        head -c 200 artifact.zip
+        unzip artifact.zip -d artifact || (echo "Failed to unzip artifact.zip" && exit 1)
         cat artifact/test.txt
         echo "Artifact downloaded successfully!"
