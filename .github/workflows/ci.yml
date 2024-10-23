@@ -35,13 +35,37 @@ jobs:
         name: artifact
         path: test.txt
 
-    - name: Generate Artifact URL
-      id: generate_artifact_url
+    - name: Wait for artifact to be available
+      run: sleep 60
+
+    - name: Fetch Artifact ID
+      id: fetch-artifact-id
       run: |
-        sleep 60
-        ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="artifact") | .id')
-        echo "ARTIFACT_ID = $ARTIFACT_ID"
-        echo "ARTIFACT_URL=https://github.com/tsviz/actions-test/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID}" >> $GITHUB_ENV
+        echo "Fetching Artifact ID..."
+        for i in {1..5}; do
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
+          echo "API Response: $RESPONSE"
+          ARTIFACT_ID=$(echo "$RESPONSE" | jq -r '.artifacts[] | select(.name=="artifact") | .id')
+          if [ -n "$ARTIFACT_ID" ]; then
+            echo "ARTIFACT_ID = $ARTIFACT_ID"
+            echo "artifact_id=$ARTIFACT_ID" >> $GITHUB_ENV
+            break
+          else
+            echo "Artifact not found, retrying in 10 seconds..."
+            sleep 10
+          fi
+        done
+
+    - name: Debug Artifact ID
+      run: "echo Debugging Artifact ID: ${{ env.artifact_id }}"
+
+    # - name: Generate Artifact URL
+    #   id: generate_artifact_url
+    #   run: |
+    #     sleep 60
+    #     ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="artifact") | .id')
+    #     echo "ARTIFACT_ID = $ARTIFACT_ID"
+    #     echo "ARTIFACT_URL=https://github.com/tsviz/actions-test/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID}" >> $GITHUB_ENV
   
     - name: Create Issue
       uses: actions/github-script@v3
