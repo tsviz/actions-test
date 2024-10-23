@@ -38,10 +38,13 @@ jobs:
     - name: Generate Artifact URL
       id: generate_artifact_url
       run: |
-        ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="artifact") | .id')
+        echo "Fetching Artifact ID..."
+        RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
+        echo "API Response: $RESPONSE"
+        ARTIFACT_ID=$(echo "$RESPONSE" | jq -r '.artifacts[] | select(.name=="artifact") | .id')
         echo "ARTIFACT_ID = $ARTIFACT_ID"
-        echo "ARTIFACT_URL=https://github.com/tsviz/actions-test/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID}" >> $GITHUB_ENV
-  
+        echo "artifact_id=$ARTIFACT_ID" >> $GITHUB_ENV
+
     - name: Create Issue
       uses: actions/github-script@v3
       with:
