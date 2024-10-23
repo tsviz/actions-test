@@ -18,19 +18,7 @@ jobs:
       run: |
         echo "Extracting Artifact URL from issue body..."
         ARTIFACT_URL=$(echo "${{ github.event.issue.body }}" | grep -oP 'Artifact URL:\s*\K\S+')
-        echo "Artifact URL: $ARTIFACT_URL"
-        echo "::set-output name=artifact_url::$ARTIFACT_URL"
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '14'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run build
-      run: npm run build
+        echo "artifact_url=${ARTIFACT_URL}" >> $GITHUB_ENV
 
     - name: Use Artifact URL
-      run: "echo Using Artifact URL: ${{ steps.extract-url.outputs.artifact_url }}"
+      run: "echo Using Artifact URL: ${{ env.artifact_url }}"
