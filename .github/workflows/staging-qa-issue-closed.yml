@@ -28,3 +28,10 @@ jobs:
 
     - name: Use Artifact URL
       run: "echo Using Artifact URL: ${{ env.artifact_url }}"
+
+    - name: Download Artifact
+      run: |
+        curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" ${{ env.artifact_url }} > artifact.zip
+        unzip artifact.zip -d artifact
+        cat artifact/test.txt
+        echo "Artifact downloaded successfully!"
