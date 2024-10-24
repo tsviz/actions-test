@@ -32,13 +32,15 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: artifact_id
+        name: text-file
         path: test.txt
 
     - name: Generate Artifact URL
       id: generate_artifact_url
       run: |
-        ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="artifact_id") | .id')
+        sleep 120
+        ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="text-file") | .id')
+        echo "ARTIFACT_ID = $ARTIFACT_ID"
         echo "ARTIFACT_ID = $ARTIFACT_ID" >> $GITHUB_ENV
         echo "ARTIFACT_URL=https://github.com/tsviz/actions-test/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID}" >> $GITHUB_ENV
 
