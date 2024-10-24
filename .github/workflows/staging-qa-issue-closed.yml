@@ -25,7 +25,7 @@ jobs:
         echo "Extracting Artifact ID from issue body..."
         ARTIFACT_ID=$(echo "${{ github.event.issue.body }}" | grep -oP '(?<=Artifact ID: ).*')
         echo "ARTIFACT_ID = ${ARTIFACT_ID}"
-        echo "artifact_id=${ARTIFACT_ID}" >> $GITHUB_ENV
+        echo "ARTIFACT_ID=${ARTIFACT_ID}" >> $GITHUB_ENV
 
     - name: Download Artifact
       run: |
