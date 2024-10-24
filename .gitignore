@@ -1,0 +1,2 @@
+# exclude all shell scripts
+*.sh

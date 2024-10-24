@@ -39,20 +39,8 @@ jobs:
       id: generate_artifact_url
       run: |
         ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="artifact_id") | .id')
-        echo "ARTIFACT_ID = $ARTIFACT_ID"
+        echo "ARTIFACT_ID = $ARTIFACT_ID" >> $GITHUB_ENV
         echo "ARTIFACT_URL=https://github.com/tsviz/actions-test/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID}" >> $GITHUB_ENV
-
-    # - name: Get Artifact ID
-    #   run: |
-    #     RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
-    #     echo "API Response: $RESPONSE"
-    #     ARTIFACT_ID=$(echo $RESPONSE | jq -r '.artifacts[] | select(.name=="artifact_id") | .id')
-    #     echo "ARTIFACT_ID = $ARTIFACT_ID"
-    #     if [ -z "$ARTIFACT_ID" ]; then
-    #       echo "No artifact found with the name 'artifact'."
-    #     else
-    #       echo "ARTIFACT_URL=https://github.com/tsviz/actions-test/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID}" >> $GITHUB_ENV
-    #     fi
 
     - name: Create Issue
       uses: actions/github-script@v3
@@ -71,6 +59,7 @@ jobs:
           Additional Information:
           - Image Tag: ${process.env.IMAGE_TAG}
           - Server URL: ${process.env.CONTAINER_APP_URL}
+          - Terraform IaC files - Artifact ID: ${process.env.ARTIFACT_ID}
           - Terraform IaC files - Artifact URL: ${process.env.ARTIFACT_URL}
           `;
           
@@ -86,4 +75,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
         CONTAINER_APP_URL: ${{ env.CONTAINER_APP_URL }}
-        ARTIFACT_URL: ${{ env.ARTIFACT_URL }}
+        ARTIFACT_ID: ${{ env.ARTIFACT_ID }}
