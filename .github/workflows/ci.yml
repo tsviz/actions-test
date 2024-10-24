@@ -38,7 +38,6 @@ jobs:
     - name: Generate Artifact URL
       id: generate_artifact_url
       run: |
-        sleep 120
         ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name=="text-file") | .id')
         echo "ARTIFACT_ID = $ARTIFACT_ID"
         echo "ARTIFACT_ID = $ARTIFACT_ID" >> $GITHUB_ENV
@@ -77,4 +76,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
         CONTAINER_APP_URL: ${{ env.CONTAINER_APP_URL }}
-        ARTIFACT_ID: ${{ env.ARTIFACT_ID }}
